@@ -1,122 +1,146 @@
-// Definir constantes para elementos del DOM
+// Obtener referencias a los elementos del DOM
+const titleElement = document.getElementById("Tabla");
 const animalesElement = document.getElementById("Animales");
 const animalSelect = document.getElementById("animal");
 const edadSelect = document.getElementById("edad");
 const comentarios = document.getElementById("comentarios");
 const previewImage = document.getElementById("preview");
 const btnRegistrar = document.getElementById("btnRegistrar");
+const player = document.getElementById("player");
+const exampleModal = document.getElementById("exampleModal");
 
+// Variable para almacenar los datos de los animales
+let data;
+
+// Cargar datos de animales desde el archivo JSON
 fetch('assets/js/animales.json')
   .then(response => response.json())
-  .then(data => {
-    // Trabaja con los datos del JSON aquí
+  .then(jsonData => {
+    data = jsonData;
+    // Agregar cada animal al select de animal
     data.animales.forEach(animal => {
-      agregarAnimal(animal); // Agregar cada animal a la tabla
+      const option = document.createElement('option');
+      option.value = animal.name;
+      option.textContent = animal.name;
+      animalSelect.appendChild(option);
     });
   })
   .catch(error => console.error('Error al cargar el archivo JSON', error));
 
-// Función para obtener la ruta completa de una imagen
+// Función para obtener la ruta de la imagen
 const obtenerRutaImagen = (nombreImagen) => {
-  return `assets/${nombreImagen}`; // Ajusta la ruta según la estructura de tu proyecto
+  const rutaImagen = `./assets/imgs/${nombreImagen}`;
+  console.log("Ruta de la imagen:", rutaImagen);
+  return rutaImagen;
 };
 
-// Función para obtener la ruta completa de un sonido
-const obtenerRutaSonido = (nombreSonido) => {
-  return `assets/${nombreSonido}`; // Ajusta la ruta según la estructura de tu proyecto
+// Función para obtener la ruta del sonido
+const obtenerRutaSonido = (nombreAnimal) => {
+  const animal = data.animales.find(a => a.name === nombreAnimal);
+  if (animal) {
+    const rutaSonido = `./assets/sounds/${animal.sonido}`;
+    console.log("Ruta del sonido:", rutaSonido);
+    return rutaSonido;
+  } else {
+    console.log("Animal no encontrado");
+    return '';
+  }
 };
 
-// Función para crear una tarjeta de animal
-const crearTarjetaAnimal = (animal) => {
-  const tarjeta = document.createElement("div");
-  tarjeta.classList.add("card", "bg-dark", "text-white", "shadow-lg", "m-2");
-  tarjeta.style.width = "18rem";
 
-  const imagen = document.createElement("img");
-  imagen.classList.add("card-img-top");
-  imagen.src = obtenerRutaImagen(animal.imagen);
-  imagen.alt = `Imagen de un ${animal.name}`;
+// Agregar evento de cambio al select de animal para mostrar la imagen previa
+animalSelect.addEventListener('change', (event) => {
+  const selectedAnimal = event.target.value;
+  const selectedAnimalData = data.animales.find(animal => animal.name === selectedAnimal);
+  const selectedAnimalImagePath = obtenerRutaImagen(selectedAnimalData.imagen);
+  previewImage.innerHTML = ''; // Limpiar el contenido previo
+  const selectedAnimalPreview = document.createElement('img');
+  selectedAnimalPreview.src = selectedAnimalImagePath;
+  selectedAnimalPreview.alt = `Imagen de ${selectedAnimal}`;
+  previewImage.appendChild(selectedAnimalPreview);
+});
 
-  const cardBody = document.createElement("div");
-  cardBody.classList.add("card-body");
+// Agregar evento de clic al botón de registrar animal
+btnRegistrar.addEventListener('click', () => {
+  const selectedAnimal = animalSelect.value;
+  const selectedEdad = edadSelect.value;
+  const comentariosText = comentarios.value;
 
-  const titulo = document.createElement("h5");
-  titulo.classList.add("card-title");
-  titulo.textContent = animal.name;
-
-  const subtitulo = document.createElement("h6");
-  subtitulo.classList.add("card-subtitle", "mb-2", "text-muted");
-  subtitulo.textContent = `Edad: ${animal.edad || "No indicada"}`;
-
-  const texto = document.createElement("p");
-  texto.classList.add("card-text");
-  texto.textContent = animal.comentarios;
-
-  const btnSonido = document.createElement("button");
-  btnSonido.classList.add("btn", "btn-primary", "mt-2");
-  btnSonido.textContent = "Reproducir sonido";
-  btnSonido.addEventListener("click", () => reproducirSonido(animal.sonido));
-
-  cardBody.appendChild(titulo);
-  cardBody.appendChild(subtitulo);
-  cardBody.appendChild(texto);
-  cardBody.appendChild(btnSonido);
-
-  tarjeta.appendChild(imagen);
-  tarjeta.appendChild(cardBody);
-
-  return tarjeta;
-};
-
-// Función para agregar un animal a la tabla
-const agregarAnimal = (animal) => {
-  const tarjetaAnimal = crearTarjetaAnimal(animal);
-  animalesElement.appendChild(tarjetaAnimal);
-};
-
-// Función para reproducir un sonido
-const reproducirSonido = (nombreSonido) => {
-  const audio = new Audio(obtenerRutaSonido(nombreSonido));
-  audio.play();
-};
-
-// Función para manejar el registro de un nuevo animal
-const registrarAnimal = () => {
-  const animalSeleccionado = animalSelect.value;
-  const edadSeleccionada = edadSelect.value;
-  const comentariosAnimal = comentarios.value;
-
-  // Validar que todos los campos estén completos
-  if (animalSeleccionado === "" || edadSeleccionada === "" || comentariosAnimal === "") {
-    alert("Por favor, complete todos los campos del formulario.");
+  // Validación para evitar campos vacíos
+  if (!selectedAnimal || !selectedEdad || !comentariosText) {
+    alert('Por favor, completa todos los campos.');
     return;
   }
 
-  // Crear un nuevo objeto animal con los datos seleccionados
   const nuevoAnimal = {
-    name: animalSeleccionado,
-    imagen: `${animalSeleccionado}.png`,
-    sonido: `${animalSeleccionado}.mp3`,
-    edad: edadSeleccionada,
-    comentarios: comentariosAnimal
+    name: selectedAnimal,
+    imagen: selectedAnimal + '.png', // No es necesario agregar la ruta completa aquí
+    sonido: data.animales.find(a => a.name === selectedAnimal).sonido, // Get the correct audio file name from the JSON data
+    edad: selectedEdad,
+    comentarios: comentariosText
   };
+  
 
-  // Agregar el nuevo animal a la tabla
-  agregarAnimal(nuevoAnimal);
+  // Crear nueva card para el nuevo animal
+  const nuevoAnimalCard = document.createElement('div');
+  nuevoAnimalCard.classList.add('col-12', 'col-sm-4', 'my-2');
 
-  // Limpiar los campos del formulario
-  animalSelect.value = "";
-  edadSelect.value = "";
-  comentarios.value = "";
+  const nuevoAnimalImage = document.createElement('img');
+  nuevoAnimalImage.src = obtenerRutaImagen(nuevoAnimal.imagen);
+  nuevoAnimalImage.alt = `Imagen de ${nuevoAnimal.name}`;
+  nuevoAnimalImage.classList.add('card-img-top');
 
-  // Actualizar la imagen previa con la imagen del animal seleccionado (opcional)
-  previewImage.src = obtenerRutaImagen(`${animalSeleccionado}.png`);
-};
+  const nuevoAnimalBody = document.createElement('div');
+  nuevoAnimalBody.classList.add('card-body');
 
-// Agregar event listener al botón de registrar
-btnRegistrar.addEventListener("click", registrarAnimal);
+  const nuevoAnimalTitle = document.createElement('h5');
+  nuevoAnimalTitle.classList.add('card-title');
+  nuevoAnimalTitle.textContent = nuevoAnimal.name;
+  nuevoAnimalTitle.style.color = 'white';
 
-// Agregar event listener al selector de animales para actualizar la imagen previa (opcional)
-animalSelect.addEventListener("change", () => {
-  previewImage.src = obtenerRutaImagen(`${animalSelect.value}.png`);
+  const nuevoAnimalEdad = document.createElement('p');
+  nuevoAnimalEdad.classList.add('card-text');
+  nuevoAnimalEdad.textContent = `Edad: ${nuevoAnimal.edad}`;
+  nuevoAnimalEdad.style.color = 'white';
+
+  const nuevoAnimalComentarios = document.createElement('p');
+  nuevoAnimalComentarios.classList.add('card-text');
+  nuevoAnimalComentarios.textContent = nuevoAnimal.comentarios;
+  nuevoAnimalComentarios.style.color = 'white';
+
+  // Obtener referencia al elemento <audio> existente en el HTML
+  const audioElement = document.getElementById("player");
+
+  // Crear nuevo audio para el sonido del nuevo animal
+  const nuevoAnimalAudio = document.createElement('audio');
+  nuevoAnimalAudio.src = obtenerRutaSonido(nuevoAnimal.sonido);
+
+  // Añadir el nuevo audio al elemento <audio> existente en el HTML
+  audioElement.innerHTML = ''; // Limpiar el contenido previo del elemento <audio>
+  audioElement.appendChild(nuevoAnimalAudio);
+
+  // Crear botón para reproducir el sonido del nuevo animal
+  const reproducirSonidoButton = document.createElement('button');
+  reproducirSonidoButton.textContent = 'Reproducir sonido';
+  reproducirSonidoButton.addEventListener('click', () => {
+    nuevoAnimalAudio.play();
+  });
+
+  // Añadir elementos creados al cuerpo de la card
+  nuevoAnimalBody.appendChild(nuevoAnimalTitle);
+  nuevoAnimalBody.appendChild(nuevoAnimalEdad);
+  nuevoAnimalBody.appendChild(nuevoAnimalComentarios);
+  nuevoAnimalBody.appendChild(reproducirSonidoButton);
+
+  // Añadir la imagen y el cuerpo a la card
+  nuevoAnimalCard.appendChild(nuevoAnimalImage);
+  nuevoAnimalCard.appendChild(nuevoAnimalBody);
+
+  // Añadir la card al contenedor principal
+  animalesElement.appendChild(nuevoAnimalCard);
+
+  // Limpiar campos del formulario
+  animalSelect.value = '';
+  edadSelect.value = '';
+  comentarios.value = '';
 });
