@@ -1,38 +1,47 @@
 // Obtener referencias a los elementos del DOM
-const titleElement = document.getElementById("Tabla");
-const animalesElement = document.getElementById("Animales");
-const animalSelect = document.getElementById("animal");
-const edadSelect = document.getElementById("edad");
-const comentarios = document.getElementById("comentarios");
-const previewImage = document.getElementById("preview");
-const btnRegistrar = document.getElementById("btnRegistrar");
-const player = document.getElementById("player");
-const exampleModal = document.getElementById("exampleModal");
+const titleElement = document.getElementById("Tabla"); // Referencia al título de la tabla
+const animalesElement = document.getElementById("Animales"); // Referencia al contenedor de las tarjetas de animales
+const animalSelect = document.getElementById("animal"); // Referencia al select de animales
+const edadSelect = document.getElementById("edad"); // Referencia al select de edades
+const comentarios = document.getElementById("comentarios"); // Referencia al textarea de comentarios
+const previewImage = document.getElementById("preview"); // Referencia al contenedor de la imagen previa
+const btnRegistrar = document.getElementById("btnRegistrar"); // Referencia al botón de registrar animal
+const player = document.getElementById("player"); // Referencia al elemento de audio
+const exampleModal = document.getElementById("exampleModal"); // Referencia al modal de ejemplo
 
 // Variable para almacenar los datos de los animales
 let data;
 
 // Cargar datos de animales desde el archivo JSON
-fetch('assets/js/animales.json')
-  .then(response => response.json())
+fetch('assets/js/animales.json') // Cargar datos desde el archivo JSON
+  .then(response => response.json()) // Convertir la respuesta a JSON
   .then(jsonData => {
-    data = jsonData;
+    data = jsonData; // Almacenar los datos en la variable data
     // Agregar cada animal al select de animal
-    data.animales.forEach(animal => {
-      const option = document.createElement('option');
-      option.value = animal.name;
-      option.textContent = animal.name;
-      animalSelect.appendChild(option);
+    data.animales.forEach(animal => { // Iterar sobre cada animal en el arreglo
+      const option = document.createElement('option'); // Crear una nueva opción para el select
+      option.value = animal.name; // Establecer el valor de la opción como el nombre del animal
+      option.textContent = animal.name; // Establecer el texto de la opción como el nombre del animal
+      animalSelect.appendChild(option); // Agregar la opción al select de animales
     });
   })
-  .catch(error => console.error('Error al cargar el archivo JSON', error));
+  .catch(error => console.error('Error al cargar el archivo JSON', error)); // Manejar errores al cargar el archivo JSON
+
+
+
+
+
+
 
 // Función para obtener la ruta de la imagen
 const obtenerRutaImagen = (nombreImagen) => {
-  const rutaImagen = `./assets/imgs/${nombreImagen}`;
-  console.log("Ruta de la imagen:", rutaImagen);
-  return rutaImagen;
+  const rutaImagen = `./assets/imgs/${nombreImagen}`; // Construir la ruta de la imagen concatenando el nombre de la imagen con la ruta base
+  console.log("Ruta de la imagen:", rutaImagen); // Imprimir la ruta de la imagen en la consola
+  return rutaImagen; // Devolver la ruta de la imagen
 };
+
+
+
 
 // Función para obtener la ruta del sonido
 const obtenerRutaSonido = (nombreAnimal) => {
@@ -47,100 +56,129 @@ const obtenerRutaSonido = (nombreAnimal) => {
   }
 };
 
-
 // Agregar evento de cambio al select de animal para mostrar la imagen previa
 animalSelect.addEventListener('change', (event) => {
-  const selectedAnimal = event.target.value;
-  const selectedAnimalData = data.animales.find(animal => animal.name === selectedAnimal);
-  const selectedAnimalImagePath = obtenerRutaImagen(selectedAnimalData.imagen);
-  previewImage.innerHTML = ''; // Limpiar el contenido previo
-  const selectedAnimalPreview = document.createElement('img');
-  selectedAnimalPreview.src = selectedAnimalImagePath;
-  selectedAnimalPreview.alt = `Imagen de ${selectedAnimal}`;
-  previewImage.appendChild(selectedAnimalPreview);
+  const selectedAnimal = event.target.value; // Obtener el valor seleccionado en el select de animales
+  const selectedAnimalData = data.animales.find(animal => animal.name === selectedAnimal); // Buscar el animal en el arreglo de animales por su nombre
+  const selectedAnimalImagePath = obtenerRutaImagen(selectedAnimalData.imagen); // Obtener la ruta de la imagen del animal seleccionado
+  previewImage.innerHTML = ''; // Limpiar el contenido previo del contenedor de la imagen previa
+  const selectedAnimalPreview = document.createElement('img'); // Crear una nueva imagen para mostrar la imagen previa
+  selectedAnimalPreview.src = selectedAnimalImagePath; // Establecer la ruta de la imagen de la imagen previa
+  selectedAnimalPreview.alt = `Imagen de ${selectedAnimal}`; // Establecer el texto alternativo de la imagen previa
+  previewImage.appendChild(selectedAnimalPreview); // Agregar la imagen previa al contenedor de la imagen previa
 });
+
+
+
+
+
+
+
+
+
 
 // Agregar evento de clic al botón de registrar animal
 btnRegistrar.addEventListener('click', () => {
-  const selectedAnimal = animalSelect.value;
-  const selectedEdad = edadSelect.value;
-  const comentariosText = comentarios.value;
+  const selectedAnimal = animalSelect.value; // Obtener el valor seleccionado en el select de animales
+  const selectedEdad = edadSelect.value; // Obtener el valor seleccionado en el select de edades
+  const comentariosText = comentarios.value; // Obtener el texto ingresado en el textarea de comentarios
 
   // Validación para evitar campos vacíos
   if (!selectedAnimal || !selectedEdad || !comentariosText) {
-    alert('Por favor, completa todos los campos.');
-    return;
+    alert('Por favor, completa todos los campos.'); // Mostrar un mensaje de error si alguno de los campos está vacío
+    return; // Detener la ejecución de la función si alguno de los campos está vacío
   }
 
+
   const nuevoAnimal = {
-    name: selectedAnimal,
-    imagen: selectedAnimal + '.png', // No es necesario agregar la ruta completa aquí
-    sonido: data.animales.find(a => a.name === selectedAnimal).sonido, // Get the correct audio file name from the JSON data
-    edad: selectedEdad,
-    comentarios: comentariosText
+    name: selectedAnimal, // Establecer el nombre del nuevo animal
+    imagen: selectedAnimal + '.png', // Establecer la ruta de la imagen del nuevo animal
+    sonido: obtenerRutaSonido(selectedAnimal), // Obtener la ruta del sonido del nuevo animal a partir del nombre del animal
+    edad: selectedEdad, // Establecer la edad del nuevo animal
+    comentarios: comentariosText // Establecer los comentarios del nuevo animal
   };
-  
+
+
+
+
+
 
   // Crear nueva card para el nuevo animal
-  const nuevoAnimalCard = document.createElement('div');
-  nuevoAnimalCard.classList.add('col-12', 'col-sm-4', 'my-2');
+  const nuevoAnimalCard = document.createElement('div'); // Crear una nueva card para el nuevo animal
+  nuevoAnimalCard.classList.add('col-12', 'col-sm-4', 'my-2'); // Establecer las clases de la card
 
-  const nuevoAnimalImage = document.createElement('img');
-  nuevoAnimalImage.src = obtenerRutaImagen(nuevoAnimal.imagen);
-  nuevoAnimalImage.alt = `Imagen de ${nuevoAnimal.name}`;
-  nuevoAnimalImage.classList.add('card-img-top');
+  const nuevoAnimalImage = document.createElement('img'); // Crear una nueva imagen para el nuevo animal
+  nuevoAnimalImage.src = obtenerRutaImagen(nuevoAnimal.imagen); // Establecer la ruta de la imagen del nuevo animal
+  nuevoAnimalImage.alt = `Imagen de ${nuevoAnimal.name}`; // Establecer el texto alternativo de la imagen del nuevo animal
+  nuevoAnimalImage.classList.add('card-img-top'); // Establecer las clases de la imagen del nuevo animal
 
-  const nuevoAnimalBody = document.createElement('div');
-  nuevoAnimalBody.classList.add('card-body');
+  const nuevoAnimalBody = document.createElement('div'); // Crear un nuevo cuerpo para la card del nuevo animal
+  nuevoAnimalBody.classList.add('card-body'); // Establecer las clases del cuerpo de la card del nuevo animal
 
-  const nuevoAnimalTitle = document.createElement('h5');
-  nuevoAnimalTitle.classList.add('card-title');
-  nuevoAnimalTitle.textContent = nuevoAnimal.name;
-  nuevoAnimalTitle.style.color = 'white';
+  const nuevoAnimalTitle = document.createElement('h5'); // Crear un nuevo título para la card del nuevo animal
+  nuevoAnimalTitle.classList.add('card-title'); // Establecer las clases del título de la card del nuevo animal
+  nuevoAnimalTitle.textContent = nuevoAnimal.name; // Establecer el texto del título de la card del nuevo animal
+  nuevoAnimalTitle.style.color = 'white'; // Establecer el color del texto del título de la card del nuevo animal
 
-  const nuevoAnimalEdad = document.createElement('p');
-  nuevoAnimalEdad.classList.add('card-text');
-  nuevoAnimalEdad.textContent = `Edad: ${nuevoAnimal.edad}`;
-  nuevoAnimalEdad.style.color = 'white';
+  const nuevoAnimalEdad = document.createElement('p'); // Crear un nuevo párrafo para la edad del nuevo animal
+  nuevoAnimalEdad.classList.add('card-text'); // Establecer las clases del párrafo de la edad del nuevo animal
+  nuevoAnimalEdad.textContent = `Edad: ${nuevoAnimal.edad}`; // Establecer el texto del párrafo de la edad del nuevo animal
+  nuevoAnimalEdad.style.color = 'white'; // Establecer el color del texto del párrafo de la edad del nuevo animal
 
-  const nuevoAnimalComentarios = document.createElement('p');
-  nuevoAnimalComentarios.classList.add('card-text');
-  nuevoAnimalComentarios.textContent = nuevoAnimal.comentarios;
-  nuevoAnimalComentarios.style.color = 'white';
+  const nuevoAnimalComentarios = document.createElement('p'); // Crear un nuevo párrafo para los comentarios del nuevo animal
+  nuevoAnimalComentarios.classList.add('card-text'); // Establecer las clases del párrafo de los comentarios del nuevo animal
+  nuevoAnimalComentarios.textContent = nuevoAnimal.comentarios; // Establecer el texto del párrafo de los comentarios del nuevo animal
+  nuevoAnimalComentarios.style.color = 'white'; // Establecer el color del texto del párrafo de los comentarios del nuevo animal
 
-  // Obtener referencia al elemento <audio> existente en el HTML
-  const audioElement = document.getElementById("player");
 
-  // Crear nuevo audio para el sonido del nuevo animal
-  const nuevoAnimalAudio = document.createElement('audio');
-  nuevoAnimalAudio.src = obtenerRutaSonido(nuevoAnimal.sonido);
 
-  // Añadir el nuevo audio al elemento <audio> existente en el HTML
-  audioElement.innerHTML = ''; // Limpiar el contenido previo del elemento <audio>
-  audioElement.appendChild(nuevoAnimalAudio);
 
-  // Crear botón para reproducir el sonido del nuevo animal
-  const reproducirSonidoButton = document.createElement('button');
-  reproducirSonidoButton.textContent = 'Reproducir sonido';
-  reproducirSonidoButton.addEventListener('click', () => {
-    nuevoAnimalAudio.play();
-  });
+
+
+
+
+
+
+
+// Crear botón para reproducir el sonido del nuevo animal
+const reproducirSonidoButton = document.createElement('button');
+reproducirSonidoButton.textContent = 'Reproducir sonido';
+reproducirSonidoButton.addEventListener('click', () => {
+  const audioElement = document.createElement('audio');
+  audioElement.src = obtenerRutaSonido(nuevoAnimal.name);
+  audioElement.id = `audio-${nuevoAnimal.name}`;
+  player.appendChild(audioElement);
+  audioElement.play();
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   // Añadir elementos creados al cuerpo de la card
-  nuevoAnimalBody.appendChild(nuevoAnimalTitle);
-  nuevoAnimalBody.appendChild(nuevoAnimalEdad);
-  nuevoAnimalBody.appendChild(nuevoAnimalComentarios);
-  nuevoAnimalBody.appendChild(reproducirSonidoButton);
+  nuevoAnimalBody.appendChild(nuevoAnimalTitle); // Agregar el título de la card del nuevo animal al cuerpo de la card
+  nuevoAnimalBody.appendChild(nuevoAnimalEdad); // Agregar el párrafo de la edad del nuevo animal al cuerpo de la card
+  nuevoAnimalBody.appendChild(nuevoAnimalComentarios); // Agregar el párrafo de los comentarios del nuevo animal al cuerpo de la card
+  nuevoAnimalBody.appendChild(reproducirSonidoButton); // Agregar el botón para reproducir el sonido del nuevo animal al cuerpo de la card
 
   // Añadir la imagen y el cuerpo a la card
-  nuevoAnimalCard.appendChild(nuevoAnimalImage);
-  nuevoAnimalCard.appendChild(nuevoAnimalBody);
+  nuevoAnimalCard.appendChild(nuevoAnimalImage); // Agregar la imagen del nuevo animal a la card
+  nuevoAnimalCard.appendChild(nuevoAnimalBody); // Agregar el cuerpo de la card del nuevo animal a la card
 
   // Añadir la card al contenedor principal
-  animalesElement.appendChild(nuevoAnimalCard);
+  animalesElement.appendChild(nuevoAnimalCard); // Agregar la card del nuevo animal al contenedor principal
 
   // Limpiar campos del formulario
-  animalSelect.value = '';
-  edadSelect.value = '';
-  comentarios.value = '';
+  animalSelect.value = ''; // Limpiar el valor seleccionado en el select de animales
+  edadSelect.value = ''; // Limpiar el valor seleccionado en el select de edades
+  comentarios.value = ''; // Limpiar el texto ingresado en el textarea de comentarios
 });

@@ -7,17 +7,17 @@
     },
     {
       "name": "Lobo",
-      "imagen": "Lobo.jpg",
+      "imagen": "Lobo.png",
       "sonido":"Aullido.mp3"
     },
     {
       "name": "Oso",
-      "imagen": "Oso.jpg",
+      "imagen": "Oso.png",
       "sonido":"Grunido.mp3"
     },
     {
       "name": "Serpiente",
-      "imagen": "Serpiente.jpg",
+      "imagen": "Serpiente.png",
       "sonido":"Siseo.mp3"
     },
     {
