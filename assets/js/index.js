@@ -9,17 +9,8 @@ const btnRegistrar = document.getElementById("btnRegistrar"); // Referencia al b
 const player = document.getElementById("player"); // Referencia al elemento de audio
 const exampleModal = document.getElementById("exampleModal"); // Referencia al modal de ejemplo
 
-
-
-
-
-
-
 // Variable para almacenar los datos de los animales
 let data;
-
-
-
 
 // Cargar datos de animales desde el archivo JSON
 fetch('assets/js/animales.json') // Cargar datos desde el archivo JSON
@@ -36,24 +27,12 @@ fetch('assets/js/animales.json') // Cargar datos desde el archivo JSON
   })
   .catch(error => console.error('Error al cargar el archivo JSON', error)); // Manejar errores al cargar el archivo JSON
 
-
-
-
-
-
-
-
 // Función para obtener la ruta de la imagen
 const obtenerRutaImagen = (nombreImagen) => {
   const rutaImagen = `./assets/imgs/${nombreImagen}`; // Construir la ruta de la imagen concatenando el nombre de la imagen con la ruta base
   console.log("Ruta de la imagen:", rutaImagen); // Imprimir la ruta de la imagen en la consola
   return rutaImagen; // Devolver la ruta de la imagen
 };
-
-
-
-
-
 
 // Función para obtener la ruta del sonido
 const obtenerRutaSonido = (nombreAnimal) => {
@@ -68,10 +47,6 @@ const obtenerRutaSonido = (nombreAnimal) => {
   }
 };
 
-
-
-
-
 // Agregar evento de cambio al select de animal para mostrar la imagen previa
 animalSelect.addEventListener('change', (event) => {
   const selectedAnimal = event.target.value; // Obtener el valor seleccionado en el select de animales
@@ -85,11 +60,6 @@ animalSelect.addEventListener('change', (event) => {
   selectedAnimalPreview.style.height = '200px'; // Establecer la altura de la imagen previa
   previewImage.appendChild(selectedAnimalPreview); // Agregar la imagen previa al contenedor de la imagen previa
 });
-
-
-
-
-
 
 // Agregar evento de clic al botón de registrar animal
 btnRegistrar.addEventListener('click', () => {
@@ -111,17 +81,6 @@ btnRegistrar.addEventListener('click', () => {
     edad: selectedEdad, // Establecer la edad del nuevo animal
     comentarios: comentariosText // Establecer los comentarios del nuevo animal
   };
-
-
-
-
-
-
-
-
-
-
-
 
   // Crear elementos HTML para mostrar el nuevo animal en una tarjeta
   const nuevoAnimalCard = document.createElement('div'); // Crear una nueva card para el nuevo animal
@@ -178,55 +137,26 @@ btnRegistrar.addEventListener('click', () => {
 
 
 
-
-
-
-  // Añadir evento de clic a las imágenes de animales para mostrar el modal
-  document.querySelectorAll('#Animales img').forEach((image, index) => {
-    image.addEventListener('click', () => {
-      const animal = data.animales[index];
-      // Set modal content
-      document.getElementById('modalAnimalName').textContent = animal.name;
-      document.getElementById('modalAnimalImage').src = obtenerRutaImagen(animal.imagen);
-      document.getElementById('modalAnimalEdad').textContent = `Edad: ${animal.edad}`;
-      document.getElementById('modalAnimalComentarios').textContent = animal.comentarios;
-      // Show modal
-      $('#exampleModal').modal('show');
-    });
-  });
-
-
-
   // Agregar evento de clic a la imagen del nuevo animal para mostrar el modal
   nuevoAnimalImage.addEventListener('click', () => {
     const animal = data.animales.find(a => a.name === nuevoAnimal.name);
     // Set modal content
-    document.getElementById('modalAnimalName').textContent = animal.name;
-    document.getElementById('modalAnimalImage').src = obtenerRutaImagen(animal.imagen);
-    document.getElementById('modalAnimalEdad').textContent = `Edad: ${animal.edad}`;
-    document.getElementById('modalAnimalComentarios').textContent = animal.comentarios;
+    document.getElementById('modalAnimalName').textContent = nuevoAnimal.name;
+    document.getElementById('modalAnimalImage').src = obtenerRutaImagen(nuevoAnimal.imagen);
+    document.getElementById('modalAnimalEdad').textContent = `Edad: ${nuevoAnimal.edad}`;
+    document.getElementById('modalAnimalComentarios').textContent = `Comentario: ${nuevoAnimal.comentarios}`;
     // Show modal
     $('#exampleModal').modal('show');
+
+    // Cambia el fondo del modal-body y modal-header a blanco
+    const modalBody = $('#exampleModal .modal-body');
+    const modalHeader = $('#exampleModal .modal-header');
+    modalBody.css('background-color', 'white');
+    modalHeader.css('background-color', 'white');
   });
 
   // Añadir la imagen al cuerpo de la card
   nuevoAnimalBody.appendChild(nuevoAnimalImage);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
 
 
   // Añadir elementos creados al cuerpo de la card
