@@ -56,6 +56,13 @@ const obtenerRutaSonido = (nombreAnimal) => {
   }
 };
 
+
+
+
+
+
+
+
 // Agregar evento de cambio al select de animal para mostrar la imagen previa
 animalSelect.addEventListener('change', (event) => {
   const selectedAnimal = event.target.value; // Obtener el valor seleccionado en el select de animales
@@ -64,7 +71,9 @@ animalSelect.addEventListener('change', (event) => {
   previewImage.innerHTML = ''; // Limpiar el contenido previo del contenedor de la imagen previa
   const selectedAnimalPreview = document.createElement('img'); // Crear una nueva imagen para mostrar la imagen previa
   selectedAnimalPreview.src = selectedAnimalImagePath; // Establecer la ruta de la imagen de la imagen previa
-  selectedAnimalPreview.alt = `Imagen de ${selectedAnimal}`; // Establecer el texto alternativo de la imagen previa
+  selectedAnimalPreview.alt = `Imagen de ${selectedAnimal}`;
+  selectedAnimalPreview.style.width = '200px'; // Establecer el ancho de la imagen previa
+  selectedAnimalPreview.style.height = '200px'; // Establecer el texto alternativo de la imagen previa
   previewImage.appendChild(selectedAnimalPreview); // Agregar la imagen previa al contenedor de la imagen previa
 });
 
@@ -105,30 +114,46 @@ btnRegistrar.addEventListener('click', () => {
 
   // Crear nueva card para el nuevo animal
   const nuevoAnimalCard = document.createElement('div'); // Crear una nueva card para el nuevo animal
-  nuevoAnimalCard.classList.add('col-12', 'col-sm-4', 'my-2'); // Establecer las clases de la card
+  nuevoAnimalCard.classList.add('col-12', 'col-sm-4', 'my-2', 'card'); // Establecer las clases de la card
+  nuevoAnimalCard.style.padding = '5px'; // Agregar 10 píxeles de relleno a todos los lados de la tarjeta
+  nuevoAnimalCard.style.margin = '5px'; // Agregar 10 píxeles de margen a todos los lados de la tarjeta
 
+
+  const nuevoAnimalBody = document.createElement('div'); // Crear un nuevo cuerpo para la card del nuevo animal
+  nuevoAnimalBody.classList.add('card-body'); // Establecer las clases del cuerpo de la card del nuevo animal
+  nuevoAnimalBody.style.width = '100%'; // Establecer el ancho de la tarjeta
+  nuevoAnimalBody.style.height = '200px';
+  nuevoAnimalBody.style.objectFit = 'cover';
+  nuevoAnimalBody.style.backgroundColor = 'white';
+
+
+  
   const nuevoAnimalImage = document.createElement('img'); // Crear una nueva imagen para el nuevo animal
   nuevoAnimalImage.src = obtenerRutaImagen(nuevoAnimal.imagen); // Establecer la ruta de la imagen del nuevo animal
   nuevoAnimalImage.alt = `Imagen de ${nuevoAnimal.name}`; // Establecer el texto alternativo de la imagen del nuevo animal
   nuevoAnimalImage.classList.add('card-img-top'); // Establecer las clases de la imagen del nuevo animal
+  nuevoAnimalImage.style.width = '100%'; // Establecer el ancho de la imagen al 100% del contenedor (tarjeta)
+  nuevoAnimalImage.style.height = '200px'; // Establecer la altura fija de la imagen a 300px
+  nuevoAnimalImage.style.objectFit = 'cover'; // Ajustar la imagen dentro de su contenedor manteniendo la relación de aspecto
+  nuevoAnimalImage.style.backgroundColor = 'dark'; // Establecer el color de fondo de la imagen
+  
 
-  const nuevoAnimalBody = document.createElement('div'); // Crear un nuevo cuerpo para la card del nuevo animal
-  nuevoAnimalBody.classList.add('card-body'); // Establecer las clases del cuerpo de la card del nuevo animal
+
 
   const nuevoAnimalTitle = document.createElement('h5'); // Crear un nuevo título para la card del nuevo animal
   nuevoAnimalTitle.classList.add('card-title'); // Establecer las clases del título de la card del nuevo animal
   nuevoAnimalTitle.textContent = nuevoAnimal.name; // Establecer el texto del título de la card del nuevo animal
-  nuevoAnimalTitle.style.color = 'white'; // Establecer el color del texto del título de la card del nuevo animal
+  nuevoAnimalTitle.style.color = 'dark'; // Establecer el color del texto del título de la card del nuevo animal
 
   const nuevoAnimalEdad = document.createElement('p'); // Crear un nuevo párrafo para la edad del nuevo animal
   nuevoAnimalEdad.classList.add('card-text'); // Establecer las clases del párrafo de la edad del nuevo animal
   nuevoAnimalEdad.textContent = `Edad: ${nuevoAnimal.edad}`; // Establecer el texto del párrafo de la edad del nuevo animal
-  nuevoAnimalEdad.style.color = 'white'; // Establecer el color del texto del párrafo de la edad del nuevo animal
+  nuevoAnimalEdad.style.color = 'dark'; // Establecer el color del texto del párrafo de la edad del nuevo animal
 
   const nuevoAnimalComentarios = document.createElement('p'); // Crear un nuevo párrafo para los comentarios del nuevo animal
   nuevoAnimalComentarios.classList.add('card-text'); // Establecer las clases del párrafo de los comentarios del nuevo animal
   nuevoAnimalComentarios.textContent = nuevoAnimal.comentarios; // Establecer el texto del párrafo de los comentarios del nuevo animal
-  nuevoAnimalComentarios.style.color = 'white'; // Establecer el color del texto del párrafo de los comentarios del nuevo animal
+  nuevoAnimalComentarios.style.color = 'dark'; // Establecer el color del texto del párrafo de los comentarios del nuevo animal
 
 
 
@@ -140,22 +165,40 @@ btnRegistrar.addEventListener('click', () => {
 
 
 
-// Crear botón para reproducir el sonido del nuevo animal
-const reproducirSonidoButton = document.createElement('button');
-reproducirSonidoButton.textContent = 'Reproducir sonido';
-reproducirSonidoButton.addEventListener('click', () => {
-  const audioElement = document.createElement('audio');
-  audioElement.src = obtenerRutaSonido(nuevoAnimal.name);
-  audioElement.id = `audio-${nuevoAnimal.name}`;
-  player.appendChild(audioElement);
-  audioElement.play();
-});
+  // Crear botón para reproducir el sonido del nuevo animal
+  const reproducirSonidoButton = document.createElement('button');
+  reproducirSonidoButton.textContent = 'Reproducir sonido';
+  reproducirSonidoButton.addEventListener('click', () => {
+    const audioElement = document.createElement('audio');
+    audioElement.src = obtenerRutaSonido(nuevoAnimal.name);
+    audioElement.id = `audio-${nuevoAnimal.name}`;
+    player.appendChild(audioElement);
+    audioElement.play();
+  });
 
 
 
 
 
 
+
+
+  document.querySelectorAll('#Animales > div > div > img').forEach((image) => {
+    image.addEventListener('click', (event) => {
+      const animalId = event.target.dataset.animalId;
+      const animal = data.animales[animalId];
+
+      // Set modal content
+      document.getElementById('modalAnimalName').textContent = animal.name;
+      document.getElementById('modalAnimalImage').src = obtenerRutaImagen(animal.imagen);
+      document.getElementById('modalAnimalEdad').textContent = `Edad: ${animal.edad}`;
+      document.getElementById('modalAnimalComentarios').textContent = animal.comentarios;
+      document.getElementById('modalAnimalSound').src = obtenerRutaSonido(animal.name);
+
+      // Show modal
+      exampleModal.modal('show');
+    });
+  });
 
 
 
