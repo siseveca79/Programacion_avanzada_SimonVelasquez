@@ -9,8 +9,17 @@ const btnRegistrar = document.getElementById("btnRegistrar"); // Referencia al b
 const player = document.getElementById("player"); // Referencia al elemento de audio
 const exampleModal = document.getElementById("exampleModal"); // Referencia al modal de ejemplo
 
+
+
+
+
+
+
 // Variable para almacenar los datos de los animales
 let data;
+
+
+
 
 // Cargar datos de animales desde el archivo JSON
 fetch('assets/js/animales.json') // Cargar datos desde el archivo JSON
@@ -33,12 +42,15 @@ fetch('assets/js/animales.json') // Cargar datos desde el archivo JSON
 
 
 
+
 // Función para obtener la ruta de la imagen
 const obtenerRutaImagen = (nombreImagen) => {
   const rutaImagen = `./assets/imgs/${nombreImagen}`; // Construir la ruta de la imagen concatenando el nombre de la imagen con la ruta base
   console.log("Ruta de la imagen:", rutaImagen); // Imprimir la ruta de la imagen en la consola
   return rutaImagen; // Devolver la ruta de la imagen
 };
+
+
 
 
 
@@ -60,9 +72,6 @@ const obtenerRutaSonido = (nombreAnimal) => {
 
 
 
-
-
-
 // Agregar evento de cambio al select de animal para mostrar la imagen previa
 animalSelect.addEventListener('change', (event) => {
   const selectedAnimal = event.target.value; // Obtener el valor seleccionado en el select de animales
@@ -73,7 +82,7 @@ animalSelect.addEventListener('change', (event) => {
   selectedAnimalPreview.src = selectedAnimalImagePath; // Establecer la ruta de la imagen de la imagen previa
   selectedAnimalPreview.alt = `Imagen de ${selectedAnimal}`;
   selectedAnimalPreview.style.width = '200px'; // Establecer el ancho de la imagen previa
-  selectedAnimalPreview.style.height = '200px'; // Establecer el texto alternativo de la imagen previa
+  selectedAnimalPreview.style.height = '200px'; // Establecer la altura de la imagen previa
   previewImage.appendChild(selectedAnimalPreview); // Agregar la imagen previa al contenedor de la imagen previa
 });
 
@@ -98,7 +107,7 @@ btnRegistrar.addEventListener('click', () => {
     return; // Detener la ejecución de la función si alguno de los campos está vacío
   }
 
-
+  // Crear un objeto para el nuevo animal con los datos ingresados
   const nuevoAnimal = {
     name: selectedAnimal, // Establecer el nombre del nuevo animal
     imagen: selectedAnimal + '.png', // Establecer la ruta de la imagen del nuevo animal
@@ -112,12 +121,17 @@ btnRegistrar.addEventListener('click', () => {
 
 
 
-  // Crear nueva card para el nuevo animal
+
+
+
+
+
+
+  // Crear elementos HTML para mostrar el nuevo animal en una tarjeta
   const nuevoAnimalCard = document.createElement('div'); // Crear una nueva card para el nuevo animal
   nuevoAnimalCard.classList.add('col-12', 'col-sm-4', 'my-2', 'card'); // Establecer las clases de la card
   nuevoAnimalCard.style.padding = '5px'; // Agregar 10 píxeles de relleno a todos los lados de la tarjeta
   nuevoAnimalCard.style.margin = '5px'; // Agregar 10 píxeles de margen a todos los lados de la tarjeta
-
 
   const nuevoAnimalBody = document.createElement('div'); // Crear un nuevo cuerpo para la card del nuevo animal
   nuevoAnimalBody.classList.add('card-body'); // Establecer las clases del cuerpo de la card del nuevo animal
@@ -126,8 +140,6 @@ btnRegistrar.addEventListener('click', () => {
   nuevoAnimalBody.style.objectFit = 'cover';
   nuevoAnimalBody.style.backgroundColor = 'white';
 
-
-  
   const nuevoAnimalImage = document.createElement('img'); // Crear una nueva imagen para el nuevo animal
   nuevoAnimalImage.src = obtenerRutaImagen(nuevoAnimal.imagen); // Establecer la ruta de la imagen del nuevo animal
   nuevoAnimalImage.alt = `Imagen de ${nuevoAnimal.name}`; // Establecer el texto alternativo de la imagen del nuevo animal
@@ -136,9 +148,6 @@ btnRegistrar.addEventListener('click', () => {
   nuevoAnimalImage.style.height = '200px'; // Establecer la altura fija de la imagen a 300px
   nuevoAnimalImage.style.objectFit = 'cover'; // Ajustar la imagen dentro de su contenedor manteniendo la relación de aspecto
   nuevoAnimalImage.style.backgroundColor = 'dark'; // Establecer el color de fondo de la imagen
-  
-
-
 
   const nuevoAnimalTitle = document.createElement('h5'); // Crear un nuevo título para la card del nuevo animal
   nuevoAnimalTitle.classList.add('card-title'); // Establecer las clases del título de la card del nuevo animal
@@ -154,12 +163,6 @@ btnRegistrar.addEventListener('click', () => {
   nuevoAnimalComentarios.classList.add('card-text'); // Establecer las clases del párrafo de los comentarios del nuevo animal
   nuevoAnimalComentarios.textContent = nuevoAnimal.comentarios; // Establecer el texto del párrafo de los comentarios del nuevo animal
   nuevoAnimalComentarios.style.color = 'dark'; // Establecer el color del texto del párrafo de los comentarios del nuevo animal
-
-
-
-
-
-
 
 
 
@@ -182,29 +185,52 @@ btnRegistrar.addEventListener('click', () => {
 
 
 
-
-  document.querySelectorAll('#Animales > div > div > img').forEach((image) => {
-    image.addEventListener('click', (event) => {
-      const animalId = event.target.dataset.animalId;
-      const animal = data.animales[animalId];
-
+  // Añadir evento de clic a las imágenes de animales para mostrar el modal
+  document.querySelectorAll('#Animales img').forEach((image, index) => {
+    image.addEventListener('click', () => {
+      const animal = data.animales[index];
       // Set modal content
       document.getElementById('modalAnimalName').textContent = animal.name;
       document.getElementById('modalAnimalImage').src = obtenerRutaImagen(animal.imagen);
       document.getElementById('modalAnimalEdad').textContent = `Edad: ${animal.edad}`;
       document.getElementById('modalAnimalComentarios').textContent = animal.comentarios;
-      document.getElementById('modalAnimalSound').src = obtenerRutaSonido(animal.name);
-
       // Show modal
-      exampleModal.modal('show');
+      $('#exampleModal').modal('show');
     });
   });
 
 
 
+  // Agregar evento de clic a la imagen del nuevo animal para mostrar el modal
+  nuevoAnimalImage.addEventListener('click', () => {
+    const animal = data.animales.find(a => a.name === nuevoAnimal.name);
+    // Set modal content
+    document.getElementById('modalAnimalName').textContent = animal.name;
+    document.getElementById('modalAnimalImage').src = obtenerRutaImagen(animal.imagen);
+    document.getElementById('modalAnimalEdad').textContent = `Edad: ${animal.edad}`;
+    document.getElementById('modalAnimalComentarios').textContent = animal.comentarios;
+    // Show modal
+    $('#exampleModal').modal('show');
+  });
+
+  // Añadir la imagen al cuerpo de la card
+  nuevoAnimalBody.appendChild(nuevoAnimalImage);
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+  
 
 
   // Añadir elementos creados al cuerpo de la card
