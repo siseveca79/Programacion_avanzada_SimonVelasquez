@@ -91,10 +91,6 @@ animalSelect.addEventListener('change', (event) => {
 
 
 
-
-
-
-
 // Agregar evento de clic al botón de registrar animal
 btnRegistrar.addEventListener('click', () => {
   const selectedAnimal = animalSelect.value; // Obtener el valor seleccionado en el select de animales
